@@ -1,25 +1,65 @@
-name: Deploy to AWS
+name: CI/CD Pipeline
 
+# Trigger the pipeline when changes are pushed to the main branch
 on:
   push:
     branches:
       - main
 
 jobs:
-  deploy:
+  # Stage 1: Deployment to Development Environment
+  dev-deployment:
     runs-on: ubuntu-latest
-
+    environment: dev  # Use environment variables specific to dev
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
 
-      - name: Configure AWS Credentials
-        uses: aws-actions/configure-aws-credentials@v2
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
         with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1
+          node-version: '14'
 
-      - name: Deploy to S3
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+        
+      - name: Deploy to Dev
         run: |
-          aws s3 sync ./dist s3://your-s3-bucket-name --delete
+          echo "Deploying to Development..."
+          # Add your deployment commands here (e.g., Serverless, AWS CLI)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_DEV }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_DEV }}
+          AWS_REGION: 'us-west-2'
+
+  # Stage 2: Deployment to Production Environment
+  prod-deployment:
+    runs-on: ubuntu-latest
+    needs: dev-deployment  # Ensure prod deploys after dev deploy
+    environment: prod  # Use environment variables specific to prod
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v2
+        with:
+          node-version: '14'
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run tests
+        run: npm test
+        
+      - name: Deploy to Prod
+        run: |
+          echo "Deploying to Production..."
+          # Add your deployment commands here (e.g., Serverless, AWS CLI)
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_PROD }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY_PROD }}
+          AWS_REGION: 'us-west-2'
