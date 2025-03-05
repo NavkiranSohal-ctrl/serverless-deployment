@@ -34,11 +34,11 @@ A GitHub Actions workflow is set up to automate deployment. On every push to mai
 
 ## CI/CD Pipeline Screenshots
 
-### 1️⃣ GitHub Actions Workflow  
+### 1. GitHub Actions Workflow  
 ![image](https://github.com/user-attachments/assets/8e4bd942-4036-4be7-83ac-651d02766b96)
 
 
-### 2️⃣ GitHub Secrets  
+### 2. GitHub Secrets  
 ![image](https://github.com/user-attachments/assets/ab34a3e2-f8e7-4931-a9dd-eb419c60d9bb)
 
    
